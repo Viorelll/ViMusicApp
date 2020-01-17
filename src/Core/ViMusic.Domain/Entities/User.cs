@@ -2,14 +2,14 @@
 
 namespace ViMusic.Domain.Entities
 {
-    public class User
+    public class  User
     {
         public User()
         {
             Playlists = new HashSet<Playlist>();
             Albums = new HashSet<Album>();
         }
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }

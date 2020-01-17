@@ -21,6 +21,16 @@ namespace ViMusic.Application.Shared.ImageWriter
 
 
         /// <summary>
+        /// Get root image path
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static string GetImageRootPath(string filePath)
+        {
+            return Path.Combine(_imageFolderRoot, filePath);
+        }
+
+        /// <summary>
         /// Method to write file onto the disk
         /// </summary>
         /// <param name="file"></param>

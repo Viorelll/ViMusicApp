@@ -2,12 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ViMusic.Domain.Entities;
 using ViMusic.Persistence;
 
 namespace ViMusic.Application.Users.Commands.CreateUser
 {
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, int>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand>
     {
         private readonly ViMusicDbContext _context;
 
@@ -15,24 +16,26 @@ namespace ViMusic.Application.Users.Commands.CreateUser
         {
             _context = context;
         }
-        public async Task<int> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var userModel = request.User;
+            if (request == null) throw new Exception("User doesn't exists!");
 
-            if (userModel == null) throw new Exception("User doesn't exists!");
-
-            var user = new User
+            var user = await _context.User.AsNoTracking().FirstOrDefaultAsync(x => x.Email == request.UserEmail);
+            if (user == null)
             {
-                Username = userModel.Username,
-                Password = userModel.Password,
-                Email = userModel.Email
-            };
+                var newUser = new User
+                {
+                    Id = request.UserId,
+                    Username = request.Username,
+                    Email = request.UserEmail
+                };
 
-            _context.User.Add(user);
+                _context.User.Add(newUser);
 
-            await _context.SaveChangesAsync(cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
 
-            return user.Id;
+            return default;
         }
     }
 }

@@ -10,11 +10,17 @@ namespace ViMusic.WebApi.Controllers
     {
         // POST: api/createUser
         [HttpPost("createUser")]
-        public async Task<IActionResult> PostCreateUser([FromBody] CreateUserCommand command)
+        public async Task<IActionResult> PostCreateUser()
         {
-            var response = await Mediator.Send(command);
+            var command = new CreateUserCommand
+            {
+                UserId = CurrentUserId,
+                UserEmail = CurrentUser.Email
+            };
 
-            return Json(new { Id = response });
+            await Mediator.Send(command);
+
+            return Ok();
         }
     }
 }

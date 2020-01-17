@@ -1,10 +1,11 @@
 ﻿using MediatR;
-using ViMusic.Application.Models;
 
 namespace ViMusic.Application.Users.Commands.CreateUser
 {
-    public class CreateUserCommand : IRequest<int>
+    public class CreateUserCommand : IRequest
     {
-        public UserModel User { get; set; }
+        public string UserId { get; set; }
+        public string Username { get; set; }
+        public string UserEmail { get; set; }
     }
 }

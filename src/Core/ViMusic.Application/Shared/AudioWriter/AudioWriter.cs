@@ -21,6 +21,16 @@ namespace ViMusic.Application.Shared.AudioWriter
 
 
         /// <summary>
+        /// Get root audio path
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static string GetImageRootPath(string filePath)
+        {
+            return Path.Combine(_audioFolderRoot, filePath);
+        }
+
+        /// <summary>
         /// Method to write file onto the disk
         /// </summary>
         /// <param name="file"></param>
