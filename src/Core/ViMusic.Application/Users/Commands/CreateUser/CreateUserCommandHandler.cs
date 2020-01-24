@@ -8,7 +8,7 @@ using ViMusic.Persistence;
 
 namespace ViMusic.Application.Users.Commands.CreateUser
 {
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Unit>
     {
         private readonly ViMusicDbContext _context;
 
@@ -25,7 +25,6 @@ namespace ViMusic.Application.Users.Commands.CreateUser
             {
                 var newUser = new User
                 {
-                    Id = request.UserId,
                     Username = request.Username,
                     Email = request.UserEmail
                 };

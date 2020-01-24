@@ -14,7 +14,7 @@ namespace ViMusic.WebApi.Controllers
         {
             var command = new CreateUserCommand
             {
-                UserId = CurrentUserId,
+                Username = CurrentUser.Username,
                 UserEmail = CurrentUser.Email
             };
 

@@ -15,6 +15,5 @@ namespace ViMusic.WebApi.Controllers
 
         protected IMediator Mediator => _mediator ?? (_mediator = HttpContext.RequestServices.GetService<IMediator>());
         protected UserModel CurrentUser => HttpContext.GetUser();
-        protected string CurrentUserId => HttpContext.GetUserId();
     }
 }

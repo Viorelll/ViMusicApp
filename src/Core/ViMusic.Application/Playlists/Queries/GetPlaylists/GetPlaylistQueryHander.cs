@@ -19,7 +19,7 @@ namespace ViMusic.Application.Playlists.Queries.GetPlaylists
 
         public async Task<GetPlaylistSoundResponse> Handle(GetPlaylistQuery request, CancellationToken cancellationToken)
         {
-            var playlists = await _context.Playlist.Where(x => x.UserId == request.UserId).ToListAsync();
+            var playlists = await _context.Playlist.Where(x => x.User.Email == request.UserEmail).ToListAsync();
 
             if (playlists == null)
             {

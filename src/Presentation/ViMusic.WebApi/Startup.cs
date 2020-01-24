@@ -63,23 +63,23 @@ namespace ViMusic.WebApi
                 var allowedHostsSection = Configuration.GetSection("AllowedHosts");
                 var allowedHosts = allowedHostsSection.Get<string[]>();
 
-                options.AddPolicy("CORS", policy =>
-                {
-                    policy.WithOrigins(allowedHosts)
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
-                });
+                options.AddPolicy("CorsPolicy",
+                builder => builder
+                   .WithOrigins(allowedHosts)
+                   .AllowAnyMethod()
+                   .AllowAnyHeader());
             });
 
             // Authorize all actions
-            services.AddMvc(config =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                                 .RequireAuthenticatedUser()
-                                 .Build();
-                config.Filters.Add(new AuthorizeFilter(policy));
-            });
+            services.AddMvc(
+                config =>
+                {
+                    var policy = new AuthorizationPolicyBuilder()
+                                     .RequireAuthenticatedUser()
+                                     .Build();
+                    config.Filters.Add(new AuthorizeFilter(policy));
+                }
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,11 +92,12 @@ namespace ViMusic.WebApi
 
             app.UseHttpsRedirection();
 
-            app.UseCors("CORS");
+            app.UseCors("CorsPolicy");
 
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -112,33 +113,8 @@ namespace ViMusic.WebApi
             });
         }
 
-
         private void UseAuthentication(IServiceCollection services)
         {
-                //services
-                //    .AddAuthentication(
-                //        options =>
-                //        {
-                //        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                //        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                // )
-                //.AddJwtBearer(jwtBearerOptions =>
-                //{
-                //    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
-                //    {
-                //        ValidateIssuer = true,
-                //        ValidateAudience = true,
-                //        ValidateLifetime = true,
-                //        ValidateIssuerSigningKey = true,
-
-                //        ValidIssuer = "https://localhost:5001",
-                //        ValidAudience = "https://localhost:5001",
-                //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mySecretKeyForEncryption@123"))
-
-                //    };
-                //})
- 
-
                 services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -146,19 +122,20 @@ namespace ViMusic.WebApi
                 })
                 .AddJwtBearer(options =>
                 {
-                    //options.Authority = Configuration["EnviromentHost"];
-                    options.Audience = "vimusic.api";
+                    options.Authority = Configuration.GetSection("SpaConfig").GetValue<string>("Issuer"); 
+                    options.Audience = Configuration.GetSection("SpaConfig").GetValue<string>("ClientId");
+
                     options.RequireHttpsMetadata = false;
 
                     options.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
                         {
-                            var accessToken = context.Request.Query["access_token"];
+                            var accessToken = context.Request.Headers["access_token"];
 
                             if (!string.IsNullOrEmpty(accessToken))
                             {
-                                // Read the token out of the query string
+                                // Read the token out of the header
                                 context.Token = accessToken;
                             }
                             return Task.CompletedTask;

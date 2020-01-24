@@ -23,7 +23,7 @@ namespace ViMusic.WebApi.Controllers
         [HttpGet("getPlaylists")]
         public async Task<IActionResult> GetPlaylists()
         {
-            var query = new GetPlaylistQuery { UserId = CurrentUserId };
+            var query = new GetPlaylistQuery { UserEmail = CurrentUser.Email };
             var response = await Mediator.Send(query);
 
             return Json(response);
